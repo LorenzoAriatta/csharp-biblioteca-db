@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[genres]
+(
+	[Id] INT NOT NULL PRIMARY KEY,
+	[name] VARCHAR(40) NOT NULL
+)
