@@ -71,16 +71,57 @@ void RegisterMenu()
     Console.Clear();
 
     Console.Write("Your name: ");
-    string name = Console.ReadLine();
+    string nameUser = Console.ReadLine();
 
     Console.Write("Your surname: ");
-    string surname = Console.ReadLine();
+    string surnameUser = Console.ReadLine();
 
     Console.Write("Your email: ");
-    string email = Console.ReadLine();
+    string emailUser = Console.ReadLine();
 
     Console.Write("Your password: ");
-    string password = Console.ReadLine();
+    string passUser = Console.ReadLine();
+
+    using (SqlConnection db_connect = new SqlConnection("Data Source=localhost;Initial Catalog=db-biblioteca;Integrated Security=True"))
+    {
+        try
+        {
+            db_connect.Open();
+
+            string query = $"INSERT INTO users(@Name, @Username, @Password, @Mail) VALUES ({nameUser}, {surnameUser}, {emailUser}, {passUser});";
+
+            using (SqlCommand cmd = db_connect.CreateCommand())
+            using (SqlTransaction tran = db_connect.BeginTransaction("Register User"))
+            {
+                cmd.Connection = db_connect;
+                cmd.Transaction = tran;
+                try 
+                {
+                    //cmd.Parameters.Add(new SqlParameter("@Name", nameUser));
+                    //cmd.Parameters.Add(new SqlParameter("@Surname", surnameUser));
+                    //cmd.Parameters.Add(new SqlParameter("@Mail", emailUser));
+                    //cmd.Parameters.Add(new SqlParameter("@Password", passUser));
+                    cmd.CommandText = "INSERT INTO users (name, surname) VALUES (@Name, @Surname)";
+                    cmd.ExecuteNonQuery();
+                    cmd.CommandText = "INSERT INTO users (mail, password) VALUE (@Mail, @Password)";
+                    cmd.ExecuteNonQuery();
+
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            MenuHome();
+        }
+    }
+
+    
 
     //users.UserRegistration(surname, name, email, password, phone);
 }
