@@ -38,11 +38,10 @@ users.UserRegistration("Filippini", "Fabio", "fabio.filippini@gmail.com", "lallo
 users.UserRegistration("Giovene", "Giovanni", "giovanni.giovene@gmail.com", "lillo213", "755445886");
 */
 
+using System.Data.SqlClient;
+
+
 MenuHome();
-
-
-
-
 
 
 
@@ -83,15 +82,42 @@ void RegisterMenu()
     Console.Write("Your password: ");
     string password = Console.ReadLine();
 
-    Console.WriteLine("Your phone number: ");
-    string phone = Console.ReadLine();
-
     users.UserRegistration(surname, name, email, password, phone);
 }
 
-void LoginMenu()
+void LoginMenu(string emailUser, string passUser)
 {
     Console.Clear();
+
+    using (SqlConnection db_connect = new SqlConnection())
+    {
+        try
+        {
+            db_connect.Open();
+
+            string query = "SELECT * FROM users WHERE mail=@Mail AND password=@Password;";
+
+            using (SqlCommand cmd = new SqlCommand(query, db_connect))
+            {
+                cmd.Parameters.Add(new SqlParameter("@Mail", emailUser));
+                cmd.Parameters.Add(new SqlParameter("@Password", passUser));
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        Console.WriteLine($"Welcome back!");
+                    }
+                }
+            }
+        }
+    }
+
+
+    
+
+
+
+
 
     Console.WriteLine("Please, fill the fields: ");
 
