@@ -82,14 +82,21 @@ void RegisterMenu()
     Console.Write("Your password: ");
     string password = Console.ReadLine();
 
-    users.UserRegistration(surname, name, email, password, phone);
+    //users.UserRegistration(surname, name, email, password, phone);
 }
 
-void LoginMenu(string emailUser, string passUser)
+void LoginMenu()
 {
     Console.Clear();
+    Console.WriteLine("Please, fill the fields: ");
 
-    using (SqlConnection db_connect = new SqlConnection())
+    Console.Write("Email: ");
+    string emailUser = Console.ReadLine();
+
+    Console.Write("Password: ");
+    string passUser = Console.ReadLine();
+
+    using (SqlConnection db_connect = new SqlConnection("Data Source=localhost;Initial Catalog=db-biblioteca;Integrated Security=True"))
     {
         try
         {
@@ -106,36 +113,16 @@ void LoginMenu(string emailUser, string passUser)
                     if (reader.Read())
                     {
                         Console.WriteLine($"Welcome back!");
+                        Thread.Sleep(1000);
+                        MenuHome();
                     }
                 }
             }
         }
-    }
-
-
-    
-
-
-
-
-
-    Console.WriteLine("Please, fill the fields: ");
-
-    Console.Write("Email: ");
-    string email = Console.ReadLine();
-
-    Console.Write("Password: ");
-    string password = Console.ReadLine();
-
-    bool log = users.UserLogIn(email, password);
-
-
-    if (log == true)
-    {
-        Console.Write($"Welcome back");
-    }
-    else
-    {
-        MenuHome();
+        catch (Exception ex) 
+        {
+            Console.WriteLine(ex.ToString());
+            MenuHome();
+        }
     }
 }
